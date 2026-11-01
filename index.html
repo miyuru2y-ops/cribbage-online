@@ -7,6 +7,8 @@
 <title>Play Cribbage Online Free – vs Computer, No Download</title>
 <meta name="description" content="Play cribbage online free against the computer. Classic 2-player cribbage to 121 with automatic scoring, pegging and crib counting. No download, no sign-up.">
 <link rel="canonical" href="https://sluggerscribbageclub.org/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#9c4416">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Sluggers Cribbage Club"><meta property="og:title" content="Play Cribbage Online Free – vs Computer, No Download"><meta property="og:description" content="Free cribbage against the computer with a real pegboard, hints and automatic scoring."><meta property="og:url" content="https://sluggerscribbageclub.org/"><meta property="og:image" content="https://sluggerscribbageclub.org/og.png"><meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"VideoGame","name":"Cribbage Online","genre":"Card game","gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free online cribbage against the computer with automatic scoring."}
 </script>
@@ -52,6 +54,11 @@ conic-gradient(from 45deg at 50% 50%,#1f6fc0 0 25%,#2b86de 0 50%,#1f6fc0 0 75%,#
 .ctrls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}
 button{font:inherit;font-weight:800;font-size:16px;background:linear-gradient(#ffd56b,#e9ad2b);border:0;border-radius:10px;padding:9px 22px;cursor:pointer;color:#3a2600;box-shadow:0 3px 0 #8a5a0a,0 5px 10px rgba(0,0,0,.35)}
 button:active{transform:translateY(2px)}button:disabled{filter:grayscale(1);opacity:.5;cursor:default}
+.ghost{background:linear-gradient(#fff,#ddd)!important;box-shadow:0 3px 0 #777,0 5px 10px rgba(0,0,0,.35)!important;color:#222!important}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50}#modal[hidden]{display:none}
+.mbox{background:#fff;color:#1d1d1f;border-radius:14px;padding:20px 26px;width:min(420px,92vw);box-shadow:0 10px 30px rgba(0,0,0,.4)}.mbox h2{margin:0 0 10px}
+.mbox table td{padding:6px 4px}.mbox table td:last-child{text-align:right;font-weight:700}
+.card.hint{box-shadow:0 0 0 4px #4ade80,-2px 6px 10px rgba(0,0,0,.4)!important}
 #ng{background:linear-gradient(#fff,#ddd);box-shadow:0 3px 0 #777,0 5px 10px rgba(0,0,0,.35);color:#222}
 select{font:inherit;font-size:14px;padding:5px 8px;border-radius:8px;border:0}
 #board{width:100%;height:auto;max-height:590px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
@@ -85,13 +92,13 @@ footer{text-align:center;padding:24px;font-size:14px;color:#666}
   <div class="mini" id="pilelbl" style="display:none"></div>
   <div id="msg">Press <b>New Game</b> to start.</div>
   <div class="row hand" id="phand"></div>
-  <div class="ctrls"><button id="act" disabled>Discard to Crib</button><button id="ng">New Game</button>
+  <div class="ctrls"><button id="act" disabled>Discard to Crib</button><button id="hint" disabled>💡 Hint</button><button id="ng">New Game</button><button id="statsb" class="ghost">Stats</button>
    <select id="lvl" aria-label="Level"><option value="1">Easy</option><option value="2" selected>Normal</option><option value="3">Hard</option></select></div>
   <div id="log" aria-live="polite"></div>
   <i id="pb" hidden></i><i id="cb" hidden></i>
  </div>
  <div class="side"><svg id="board" viewBox="0 0 180 560" role="img" aria-label="Cribbage pegboard"></svg></div>
-</div></section>
+</div><div id="modal" hidden><div class="mbox"><h2>Your Stats</h2><div id="statbody"></div><p class="ctrls"><button id="statreset" class="ghost">Reset stats</button><button id="statclose">Close</button></p></div></div></section>
 
 <main>
 <h1>Play Cribbage Online Free</h1>
@@ -133,7 +140,7 @@ footer{text-align:center;padding:24px;font-size:14px;color:#666}
 <li><a href="/pegging-strategy/">Pegging strategy</a></li><li><a href="/best-hands/">Best cribbage hands</a></li>
 <li><a href="/counting-hands/">How to count cribbage hands fast</a></li><li><a href="/three-player-cribbage/">3-player cribbage rules</a></li>
 <li><a href="/beginners/">Cribbage for beginners</a></li></ul></main>
-<footer>© Sluggers Cribbage Club · Free to play</footer>
+<footer>© 2026 Sluggers Cribbage Club · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></footer>
 
 <script>
 const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -169,6 +176,25 @@ function faceSVG(c){const col=(c.s===1||c.s===2)?'#c8102e':'#111',R=RK[c.r-1];CU
   return b+'</svg>'}
 
 let G;
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const ST0={played:0,won:0,lost:0,skunksFor:0,skunksAgainst:0,hands:0,handPts:0,bestHand:0,cribs:0,cribPts:0,bestCrib:0,pegPts:0};
+let STATS=Object.assign({},ST0,LS.get('crib_stats',{}));
+function saveStats(){LS.set('crib_stats',STATS)}
+function showStats(){const s=STATS,pct=s.played?Math.round(s.won/s.played*100):0,avg=s.hands?(s.handPts/s.hands).toFixed(1):'–',ac=s.cribs?(s.cribPts/s.cribs).toFixed(1):'–';
+  $('statbody').innerHTML=`<table style="width:100%"><tr><td>Games played</td><td>${s.played}</td></tr><tr><td>Won / lost</td><td>${s.won} / ${s.lost} (${pct}%)</td></tr><tr><td>Skunks for / against</td><td>${s.skunksFor} / ${s.skunksAgainst}</td></tr><tr><td>Average hand</td><td>${avg}</td></tr><tr><td>Best hand</td><td>${s.bestHand}</td></tr><tr><td>Average crib (yours)</td><td>${ac}</td></tr><tr><td>Best crib</td><td>${s.bestCrib}</td></tr><tr><td>Pegging points</td><td>${s.pegPts}</td></tr></table><p style="font-size:14px;color:#666">Stats are saved in this browser only.</p>`;$('modal').hidden=false}
+function saveGame(){if(G&&G.phase&&!G.over)LS.set('crib_game',G);else LS.del('crib_game')}
+function bestKeep(hand,isDealer,known){const pool=deck().filter(c=>!known.some(k=>k.r===c.r&&k.s===c.s));let best,bv=-1e9;
+  for(const keep of combos(hand,4)){const th=hand.filter(c=>!keep.includes(c));let s=0;for(const cut of pool)s+=score(keep,cut,false);const ev=s/pool.length;
+    const v=ev+(isDealer?1:-1)*cribGuess(th[0],th[1]);if(v>bv){bv=v;best={keep,th,ev}}}return best}
+function pegChoice(hand,lvl){let best=-1,bv=-1e9;
+  hand.forEach((c,i)=>{if(val(c)+G.count>31)return;
+    let v=pegPts(G.pile.concat([c]),G.count+val(c)).p*10;const n=G.count+val(c);
+    if(lvl>=2){if(n===5||n===21)v-=4;if(G.count===0&&c.r===5)v-=5;v+=val(c)*.1}
+    if(lvl===1)v+=Math.random()*15;if(v>bv){bv=v;best=i}});return best}
+function hint(){if(G.phase==='discard'){const b=bestKeep(G.pHand,G.dealer==='p',G.pHand);G.sel=b.th.map(c=>G.pHand.indexOf(c));$('act').disabled=false;render();
+    msg(`💡 Throw <b>${b.th.map(c=>RK[c.r-1]+SU[c.s]).join(' + ')}</b> — your keep averages <b>${b.ev.toFixed(1)}</b> points with the starter.`)}
+  else if(G.phase==='peg'&&G.turn==='p'){const i=pegChoice(G.pPeg,2);if(i<0)return;render();const el=$('phand').children[i];if(el)el.classList.add('hint');
+    const c=G.pPeg[i];msg(`💡 Try the <b>${RK[c.r-1]}${SU[c.s]}</b> (count would be ${G.count+val(c)}).`)}}
 const LANE={p:[30,150],c:[58,122]};
 function holeXY(sc,w){const[u,d]=LANE[w];if(sc<=0)return[u,530];if(sc>=121)return[90,30+(w==='p'?0:14)];
   if(sc<=60){const i=sc-1;return[u,500-i*6-Math.floor(i/5)*2.6]}const j=sc-61;return[d,124+j*6+Math.floor(j/5)*2.6]}
@@ -206,7 +232,7 @@ function log(t){const l=$('log');l.innerHTML=`<div>${t}</div>`+l.innerHTML}
 function msg(t){$('msg').innerHTML=t}
 function add(who,n,why){if(!n||G.over)return;G.prev[who]=G.sc[who];G.sc[who]=Math.min(121,G.sc[who]+n);
   log(`${who==='p'?'You':'Computer'} +${n} (${why})`);upd();
-  if(G.sc[who]>=121){G.over=true;msg(who==='p'?'🎉 <b>You win!</b> Press New Game to play again.':'The computer wins this time. Press New Game to try again.');$('act').disabled=true}}
+  if(G.sc[who]>=121){G.over=true;const lo=who==='p'?G.sc.c:G.sc.p;STATS.played++;who==='p'?STATS.won++:STATS.lost++;if(lo<91)who==='p'?STATS.skunksFor++:STATS.skunksAgainst++;saveStats();LS.del('crib_game');msg(who==='p'?'🎉 <b>You win!</b> Press New Game to play again.':'The computer wins this time. Press New Game to try again.');$('act').disabled=true}}
 function upd(){$('ps').textContent=G.sc.p;$('cs').textContent=G.sc.c;
   $('pb').style.width=G.sc.p/121*100+'%';$('cb').style.width=G.sc.c/121*100+'%';drawBoard()}
 function render(){
@@ -223,12 +249,13 @@ function render(){
   const st=$('starter');st.innerHTML='';st.appendChild(cardEl(G.cut||null));
   $('count').textContent=G.phase==='peg'?G.count:'–';
   $('clbl').textContent='Computer'+(G.dealer==='c'?' ★':'');$('plbl').textContent='You'+(G.dealer==='p'?' ★':'');
+  $('hint').disabled=G.over||!((G.phase==='discard')||(G.phase==='peg'&&G.turn==='p'&&canPlay(G.pPeg)));
   const cp=$('cribpile');cp.innerHTML='';if(G.phase!=='discard'&&G.phase!=='crib')G.crib.forEach(()=>cp.appendChild(cardEl(null)))}
 function newGame(){G={sc:{p:0,c:0},prev:{p:0,c:0},dealer:Math.random()<.5?'p':'c',over:false};$('log').innerHTML='';upd();deal()}
 function deal(){if(G.over)return;const d=deck();
   Object.assign(G,{deck:d,pHand:sortH(d.splice(0,6)),cHand:sortH(d.splice(0,6)),crib:[],pile:[],count:0,cut:null,sel:[],phase:'discard'});
   msg(`Choose 2 cards to put in ${G.dealer==='p'?'<b>your</b>':"the <b>computer's</b>"} crib.`);
-  const b=$('act');b.textContent='Discard to Crib';b.disabled=true;b.onclick=discard;render()}
+  const b=$('act');b.textContent='Discard to Crib';b.disabled=true;b.onclick=discard;render();saveGame()}
 function cribGuess(a,b){let v=0;if(a.r===b.r)v+=2;if(val(a)+val(b)===15)v+=2;if(a.r===5)v+=1;if(b.r===5)v+=1;if(Math.abs(a.r-b.r)<=2&&a.r!==b.r)v+=.7;return v}
 function compDiscard(){const lvl=+$('lvl').value;let best,bv=-1e9;
   for(const keep of combos(G.cHand,4)){const th=G.cHand.filter(c=>!keep.includes(c));
@@ -268,24 +295,26 @@ function step(){if(G.over)return;render();
 function resetCount(next){if(G.over)return;G.count=0;G.pile=[];G.turn=next;setTimeout(step,G.turn==='c'?600:0);render()}
 function playCard(who,i){const H=who==='p'?G.pPeg:G.cPeg;const c=H.splice(i,1)[0];
   G.pile.push(c);G.count+=val(c);G.last=who;
-  const r=pegPts(G.pile,G.count);if(r.p)add(who,r.p,r.w);if(G.over)return render();
+  const r=pegPts(G.pile,G.count);if(r.p){add(who,r.p,r.w);if(who==='p'){STATS.pegPts+=r.p;saveStats()}}if(G.over)return render();
   if(G.count===31)return resetCount(who==='p'?'c':'p');
   if(!G.pPeg.length&&!G.cPeg.length){add(who,1,'last card');render();return setTimeout(show,900)}
   G.turn=who==='p'?'c':'p';step()}
-function compPeg(){const lvl=+$('lvl').value;let best=-1,bv=-1e9;
-  G.cPeg.forEach((c,i)=>{if(val(c)+G.count>31)return;
-    let v=pegPts(G.pile.concat([c]),G.count+val(c)).p*10;const n=G.count+val(c);
-    if(lvl>=2){if(n===5||n===21)v-=4;if(G.count===0&&c.r===5)v-=5;v+=val(c)*.1}
-    if(lvl===1)v+=Math.random()*15;if(v>bv){bv=v;best=i}});return best}
+function compPeg(){return pegChoice(G.cPeg,+$('lvl').value)}
 function show(){if(G.over)return;G.phase='show';render();
   const nd=G.dealer==='p'?'c':'p';const name=w=>w==='p'?'Your':"Computer's";
   const hand=w=>w==='p'?G.pKeep:G.cKeep;const lines=[];
-  const a=score(hand(nd),G.cut,false,true);add(nd,a.p,name(nd).toLowerCase()+' hand');lines.push(`${name(nd)} hand: <b>${a.p}</b> ${a.d.length?'('+a.d.join(', ')+')':''}`);
-  if(!G.over){const b=score(hand(G.dealer),G.cut,false,true);add(G.dealer,b.p,name(G.dealer).toLowerCase()+' hand');lines.push(`${name(G.dealer)} hand: <b>${b.p}</b> ${b.d.length?'('+b.d.join(', ')+')':''}`)}
-  if(!G.over){const k=score(G.crib,G.cut,true,true);G.phase='crib';render();add(G.dealer,k.p,'crib');lines.push(`${name(G.dealer)} crib: <b>${k.p}</b> ${k.d.length?'('+k.d.join(', ')+')':''}`)}
+  const a=score(hand(nd),G.cut,false,true);if(nd==='p'){STATS.hands++;STATS.handPts+=a.p;STATS.bestHand=Math.max(STATS.bestHand,a.p)}add(nd,a.p,name(nd).toLowerCase()+' hand');lines.push(`${name(nd)} hand: <b>${a.p}</b> ${a.d.length?'('+a.d.join(', ')+')':''}`);
+  if(!G.over){const b=score(hand(G.dealer),G.cut,false,true);if(G.dealer==='p'){STATS.hands++;STATS.handPts+=b.p;STATS.bestHand=Math.max(STATS.bestHand,b.p)}add(G.dealer,b.p,name(G.dealer).toLowerCase()+' hand');lines.push(`${name(G.dealer)} hand: <b>${b.p}</b> ${b.d.length?'('+b.d.join(', ')+')':''}`)}
+  if(!G.over){const k=score(G.crib,G.cut,true,true);if(G.dealer==='p'){STATS.cribs++;STATS.cribPts+=k.p;STATS.bestCrib=Math.max(STATS.bestCrib,k.p)}saveStats();G.phase='crib';render();add(G.dealer,k.p,'crib');lines.push(`${name(G.dealer)} crib: <b>${k.p}</b> ${k.d.length?'('+k.d.join(', ')+')':''}`)}
   if(G.over)return;msg(lines.join('<br>'));
-  const b=$('act');b.textContent='Next Hand';b.disabled=false;b.onclick=()=>{G.dealer=G.dealer==='p'?'c':'p';deal()}}
-$('ng').onclick=newGame;G={sc:{p:0,c:0},prev:{p:0,c:0}};drawBoard();
+  G.phase='between';saveGame();G.phase='crib';const b=$('act');b.textContent='Next Hand';b.disabled=false;b.onclick=nextHand}
+function nextHand(){G.dealer=G.dealer==='p'?'c':'p';deal()}
+$('ng').onclick=()=>{if(G.phase&&!G.over&&(G.sc.p||G.sc.c)&&!window.__ngc){window.__ngc=1;msg('Press <b>New Game</b> again to abandon this game.');setTimeout(()=>window.__ngc=0,4000);return}window.__ngc=0;newGame()};
+$('hint').onclick=hint;$('statsb').onclick=showStats;$('statclose').onclick=()=>$('modal').hidden=true;$('statreset').onclick=()=>{STATS=Object.assign({},ST0);saveStats();showStats()};
+(function(){const sv=LS.get('crib_game',null);if(sv&&sv.phase&&!sv.over){G=sv;upd();
+  if(G.phase==='between'){G.phase='crib';render();msg('Welcome back! Your game was saved. Press <b>Next Hand</b> to continue.');const b=$('act');b.textContent='Next Hand';b.disabled=false;b.onclick=nextHand}
+  else{G.sel=[];G.phase='discard';render();msg('Welcome back! Your game was restored — choose 2 cards for the crib.');const b=$('act');b.textContent='Discard to Crib';b.disabled=true;b.onclick=discard}}
+ else{G={sc:{p:0,c:0},prev:{p:0,c:0}};drawBoard();newGame()}})();
 </script>
 </body>
 </html>
