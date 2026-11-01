@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Cribbage Online Free – vs Computer, No Download</title>
+<meta name="description" content="Play cribbage online free against the computer. Classic 2-player cribbage to 121 with automatic scoring, pegging and crib counting. No download, no sign-up.">
+<link rel="canonical" href="/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"VideoGame","name":"Cribbage Online","genre":"Card game","gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free online cribbage against the computer with automatic scoring."}
+</script>
+<style>
+:root{--felt:#1f5f3f;--felt2:#174a31;--ink:#1d1d1f;--gold:#f2c14e;--card:#fffdf7}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f1ea;color:var(--ink);font-size:18px;line-height:1.55}
+header{background:var(--felt2);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:20px}
+header nav a{font-size:16px;font-weight:500;margin-left:16px;opacity:.9}
+#table{background:radial-gradient(circle at 50% 40%,var(--felt),var(--felt2));color:#fff;padding:14px;max-width:960px;margin:0 auto;min-height:560px;border-radius:0 0 14px 14px}
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{background:rgba(0,0,0,.25);border-radius:10px;padding:8px 12px}
+.sc b{font-size:26px;color:var(--gold)}
+.bar{height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .4s}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:112px;margin:12px 0;align-items:center}
+.lbl{text-align:center;font-size:15px;opacity:.85}
+.card{width:68px;height:98px;border-radius:8px;background:var(--card);color:#111;box-shadow:0 2px 5px rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:space-between;padding:5px 7px;font-weight:700;font-size:22px;user-select:none;position:relative;transition:transform .15s}
+.card .s{font-size:30px;text-align:center}
+.card.red{color:#c0262d}
+.card.back{background:repeating-linear-gradient(45deg,#8b1e2b,#8b1e2b 6px,#a3283a 6px,#a3283a 12px);border:3px solid #fff}
+.card.click{cursor:pointer}.card.click:hover{transform:translateY(-6px)}
+.card.sel{transform:translateY(-14px);outline:3px solid var(--gold)}
+.card.dim{opacity:.4}
+.mid{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+#count{font-size:34px;font-weight:800;color:var(--gold);text-align:center;min-width:90px}
+#msg{background:rgba(0,0,0,.3);border-radius:10px;padding:10px 14px;text-align:center;min-height:50px;font-size:18px}
+button{font:inherit;font-weight:700;background:var(--gold);border:0;border-radius:10px;padding:12px 22px;cursor:pointer;color:#222}
+button:disabled{opacity:.4;cursor:default}
+.ctr{text-align:center;margin:10px 0}
+select{font:inherit;padding:6px;border-radius:8px}
+#log{font-size:15px;max-height:120px;overflow:auto;background:rgba(0,0,0,.2);border-radius:8px;padding:6px 10px;margin-top:10px}
+main{max-width:860px;margin:0 auto;padding:20px 16px}
+h1{font-size:30px;line-height:1.2}h2{margin-top:32px}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px;text-align:left}
+footer{text-align:center;padding:24px;font-size:14px;color:#666}
+@media(max-width:560px){.card{width:52px;height:76px;font-size:17px;padding:3px 5px}.card .s{font-size:22px}.row{min-height:88px}body{font-size:17px}}
+</style>
+</head>
+<body>
+<header><a href="/">♣ Cribbage Online</a><nav><a href="#rules">Rules</a><a href="#scoring">Scoring</a></nav></header>
+
+<section id="table" aria-label="Cribbage game">
+  <div class="scores">
+    <div class="sc">You: <b id="ps">0</b> / 121<div class="bar"><i id="pb" style="width:0"></i></div></div>
+    <div class="sc">Computer: <b id="cs">0</b> / 121<div class="bar"><i id="cb" style="width:0"></i></div></div>
+  </div>
+  <div class="lbl" id="clbl">Computer's hand</div>
+  <div class="row" id="chand"></div>
+  <div class="mid">
+    <div><div class="lbl">Starter</div><div class="row" id="starter" style="min-height:0;margin:4px 0"></div><div class="lbl">Count</div><div id="count">0</div></div>
+    <div><div class="lbl" id="pilelbl">Play pile</div><div class="row" id="pile"></div></div>
+  </div>
+  <div id="msg">Welcome! Press <b>New Game</b> to start.</div>
+  <div class="lbl" style="margin-top:10px" id="plbl">Your hand</div>
+  <div class="row" id="phand"></div>
+  <div class="ctr">
+    <button id="act" disabled>Discard to Crib</button>
+    <button id="ng">New Game</button>
+    <label style="margin-left:8px">Level <select id="lvl"><option value="1">Easy</option><option value="2" selected>Normal</option><option value="3">Hard</option></select></label>
+  </div>
+  <div id="log" aria-live="polite"></div>
+</section>
+
+<main>
+<h1>Play Cribbage Online Free</h1>
+<p>Play classic two-player cribbage against the computer right in your browser. No download, no account. The game deals, counts the pegging and scores every hand for you, so you can focus on strategy. First to 121 points wins.</p>
+
+<h2 id="rules">How to Play Cribbage</h2>
+<ol>
+<li><b>Deal.</b> Each player gets 6 cards. The dealer switches every hand.</li>
+<li><b>Crib.</b> Both players put 2 cards face down into the crib. The crib belongs to the dealer.</li>
+<li><b>Starter.</b> A card is cut from the deck and turned face up. If it is a Jack, the dealer scores 2 ("his heels").</li>
+<li><b>Play (pegging).</b> Players take turns laying cards, adding to a running count that may not go over 31. Say "Go" when you can't play. Points are scored during play.</li>
+<li><b>Show.</b> The non-dealer counts their hand first, then the dealer counts their hand and the crib, each together with the starter card.</li>
+</ol>
+
+<h2 id="scoring">Cribbage Scoring</h2>
+<table>
+<tr><th>Combination</th><th>Points</th></tr>
+<tr><td>Each combination adding to 15</td><td>2</td></tr>
+<tr><td>Pair</td><td>2</td></tr>
+<tr><td>Three of a kind (pair royal)</td><td>6</td></tr>
+<tr><td>Four of a kind</td><td>12</td></tr>
+<tr><td>Run of 3 or more</td><td>1 per card</td></tr>
+<tr><td>Flush (4 in hand, 5 in crib)</td><td>4 or 5</td></tr>
+<tr><td>Jack of the starter's suit ("nobs")</td><td>1</td></tr>
+<tr><td>Pegging: count hits 15 or 31</td><td>2</td></tr>
+<tr><td>Pegging: last card / Go</td><td>1</td></tr>
+</table>
+<p>Face cards count 10 and Aces count 1. The highest possible hand is 29: three 5s and the Jack in hand with the fourth 5 of the Jack's suit as the starter.</p>
+
+<h2>Cribbage Strategy Tips</h2>
+<ul>
+<li>Keep 5s and cards that make 15s with them (10s, face cards).</li>
+<li>When it's not your crib, avoid throwing 5s or pairs into it.</li>
+<li>During pegging, avoid leading a card that lets your opponent make 15 easily, and avoid leaving the count at 5 or 21.</li>
+</ul>
+</main>
+<footer>© Cribbage Online · Free to play</footer>
+
+<script>
+const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const val=c=>Math.min(c.r,10),$=id=>document.getElementById(id);
+let G;
+function deck(){const d=[];for(let s=0;s<4;s++)for(let r=1;r<=13;r++)d.push({r,s});for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}return d}
+function combos(a,k){const out=[];(function f(s,acc){if(acc.length===k){out.push(acc.slice());return}for(let i=s;i<a.length;i++){acc.push(a[i]);f(i+1,acc);acc.pop()}})(0,[]);return out}
+function score(hand,cut,crib,detail){
+  const all=cut?hand.concat([cut]):hand.slice();let p=0;const d=[];
+  let f=0;for(let k=2;k<=all.length;k++)for(const c of combos(all,k))if(c.reduce((a,x)=>a+val(x),0)===15)f++;
+  if(f){p+=f*2;d.push(`fifteens ${f*2}`)}
+  let pr=0;for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++)if(all[i].r===all[j].r)pr+=2;
+  if(pr){p+=pr;d.push(`pairs ${pr}`)}
+  const cnt=Array(15).fill(0);all.forEach(c=>cnt[c.r]++);let run=0,r=1;
+  while(r<=13){if(!cnt[r]){r++;continue}let s=r,m=1;while(r<=13&&cnt[r]){m*=cnt[r];r++}if(r-s>=3)run+=(r-s)*m}
+  if(run){p+=run;d.push(`runs ${run}`)}
+  if(hand.length===4&&hand.every(c=>c.s===hand[0].s)){
+    if(cut&&cut.s===hand[0].s){p+=5;d.push('flush 5')}else if(!crib){p+=4;d.push('flush 4')}}
+  if(cut&&hand.some(c=>c.r===11&&c.s===cut.s)){p+=1;d.push('nobs 1')}
+  return detail?{p,d}:p}
+function cardEl(c,opts={}){const e=document.createElement('div');
+  if(!c){e.className='card back';return e}
+  e.className='card'+(c.s===1||c.s===2?' red':'');
+  e.innerHTML=`<span>${RK[c.r-1]}</span><span class="s">${SU[c.s]}</span><span style="align-self:flex-end;transform:rotate(180deg)">${RK[c.r-1]}</span>`;
+  e.setAttribute('aria-label',RK[c.r-1]+' of '+['spades','hearts','diamonds','clubs'][c.s]);
+  if(opts.click){e.classList.add('click');e.onclick=opts.click}
+  if(opts.sel)e.classList.add('sel');if(opts.dim)e.classList.add('dim');return e}
+const sortH=h=>h.sort((a,b)=>a.r-b.r||a.s-b.s);
+function log(t){const l=$('log');l.innerHTML=`<div>${t}</div>`+l.innerHTML}
+function msg(t){$('msg').innerHTML=t}
+function add(who,n,why){if(!n||G.over)return;G.sc[who]=Math.min(121,G.sc[who]+n);
+  log(`${who==='p'?'You':'Computer'} +${n} (${why})`);upd();
+  if(G.sc[who]>=121){G.over=true;msg(who==='p'?'🎉 <b>You win!</b> Press New Game to play again.':'The computer wins this time. Press New Game to try again.');$('act').disabled=true}}
+function upd(){$('ps').textContent=G.sc.p;$('cs').textContent=G.sc.c;
+  $('pb').style.width=G.sc.p/121*100+'%';$('cb').style.width=G.sc.c/121*100+'%'}
+function render(){
+  const ch=$('chand');ch.innerHTML='';
+  if(G.phase==='show'||G.phase==='crib')G.cKeep.forEach(c=>ch.appendChild(cardEl(c)));
+  else (G.phase==='peg'?G.cPeg:G.cHand).forEach(()=>ch.appendChild(cardEl(null)));
+  const ph=$('phand');ph.innerHTML='';
+  if(G.phase==='discard')G.pHand.forEach((c,i)=>ph.appendChild(cardEl(c,{sel:G.sel.includes(i),click:()=>{const k=G.sel.indexOf(i);k>=0?G.sel.splice(k,1):G.sel.length<2&&G.sel.push(i);$('act').disabled=G.sel.length!==2;render()}})));
+  else if(G.phase==='peg')G.pPeg.forEach((c,i)=>{const ok=G.turn==='p'&&val(c)+G.count<=31;ph.appendChild(cardEl(c,{dim:!ok,click:ok?()=>playCard('p',i):null}))});
+  else G.pKeep.forEach(c=>ph.appendChild(cardEl(c)));
+  const pl=$('pile');pl.innerHTML='';
+  if(G.phase==='crib'){$('pilelbl').textContent=(G.dealer==='p'?'Your':"Computer's")+' crib';G.crib.forEach(c=>pl.appendChild(cardEl(c)))}
+  else{$('pilelbl').textContent='Play pile';G.pile.forEach(c=>pl.appendChild(cardEl(c)))}
+  const st=$('starter');st.innerHTML='';st.appendChild(cardEl(G.cut||null));
+  $('count').textContent=G.phase==='peg'?G.count:'–';
+  $('clbl').textContent="Computer's hand"+(G.dealer==='c'?' (dealer)':'');
+  $('plbl').textContent='Your hand'+(G.dealer==='p'?' (dealer)':'')}
+function newGame(){G={sc:{p:0,c:0},dealer:Math.random()<.5?'p':'c',over:false};$('log').innerHTML='';upd();deal()}
+function deal(){if(G.over)return;const d=deck();
+  Object.assign(G,{deck:d,pHand:sortH(d.splice(0,6)),cHand:sortH(d.splice(0,6)),crib:[],pile:[],count:0,cut:null,sel:[],phase:'discard'});
+  msg(`Choose 2 cards to put in ${G.dealer==='p'?'<b>your</b>':"the <b>computer's</b>"} crib.`);
+  const b=$('act');b.textContent='Discard to Crib';b.disabled=true;b.onclick=discard;render()}
+function cribGuess(a,b){let v=0;if(a.r===b.r)v+=2;if(val(a)+val(b)===15)v+=2;if(a.r===5)v+=1;if(b.r===5)v+=1;if(Math.abs(a.r-b.r)<=2&&a.r!==b.r)v+=.7;return v}
+function compDiscard(){const lvl=+$('lvl').value;let best,bv=-1e9;
+  for(const keep of combos(G.cHand,4)){const th=G.cHand.filter(c=>!keep.includes(c));
+    let v=score(keep,null,false);
+    if(lvl>=3){let s=0,n=0;for(const cut of G.deck.slice(0,40)){s+=score(keep,cut,false);n++}v=s/n}
+    if(lvl>=2)v+=(G.dealer==='c'?1:-1)*cribGuess(th[0],th[1]);
+    if(lvl===1)v+=Math.random()*6;
+    if(v>bv){bv=v;best={keep,th}}}
+  return best}
+function discard(){const th=G.sel.map(i=>G.pHand[i]);G.pKeep=G.pHand.filter((c,i)=>!G.sel.includes(i));
+  const cd=compDiscard();G.cKeep=sortH(cd.keep);G.crib=sortH(th.concat(cd.th));
+  G.cut=G.deck.pop();
+  if(G.cut.r===11)add(G.dealer,2,'his heels');
+  G.pPeg=G.pKeep.slice();G.cPeg=G.cKeep.slice();G.phase='peg';G.turn=G.dealer==='p'?'c':'p';G.last=null;
+  $('act').disabled=true;$('act').textContent='Go';log('Starter: '+RK[G.cut.r-1]+SU[G.cut.s]);step()}
+function pegPts(pile,count){let p=0,w=[];
+  if(count===15){p+=2;w.push('fifteen')}if(count===31){p+=2;w.push('thirty-one')}
+  let k=1;const t=pile[pile.length-1];while(k<pile.length&&pile[pile.length-1-k].r===t.r)k++;
+  if(k>=2){const v=[0,0,2,6,12][k];p+=v;w.push(['','','pair','pair royal','double pair royal'][k])}
+  for(let l=pile.length;l>=3;l--){const rs=pile.slice(-l).map(c=>c.r);const s=new Set(rs);
+    if(s.size===l&&Math.max(...rs)-Math.min(...rs)===l-1){p+=l;w.push('run of '+l);break}}
+  return{p,w:w.join(', ')}}
+const canPlay=h=>h.some(c=>val(c)+G.count<=31);
+function step(){if(G.over)return;render();
+  const me=G.turn,other=me==='p'?'c':'p',H=me==='p'?G.pPeg:G.cPeg,O=me==='p'?G.cPeg:G.pPeg;
+  if(!G.pPeg.length&&!G.cPeg.length){return setTimeout(show,900)}
+  if(canPlay(H)){
+    if(me==='p'){msg(`Your turn — play a card (count ${G.count}).`);$('act').disabled=true}
+    else{msg('Computer is thinking…');setTimeout(()=>playCard('c',compPeg()),750)}
+    return}
+  if(canPlay(O)){
+    if(me==='p'&&H.length){msg('You can’t play — press <b>Go</b>.');const b=$('act');b.disabled=false;b.onclick=()=>{b.disabled=true;log('You: Go');G.turn=other;step()};return}
+    if(me==='c'&&H.length)log('Computer: Go');
+    G.turn=other;return step()}
+  if(G.count<31&&G.last)add(G.last,1,'go');
+  resetCount(G.last==='p'?'c':'p')}
+function resetCount(next){if(G.over)return;G.count=0;G.pile=[];G.turn=next;setTimeout(step,G.turn==='c'?600:0);render()}
+function playCard(who,i){const H=who==='p'?G.pPeg:G.cPeg;const c=H.splice(i,1)[0];
+  G.pile.push(c);G.count+=val(c);G.last=who;
+  const r=pegPts(G.pile,G.count);if(r.p)add(who,r.p,r.w);if(G.over)return render();
+  if(G.count===31)return resetCount(who==='p'?'c':'p');
+  if(!G.pPeg.length&&!G.cPeg.length){add(who,1,'last card');render();return setTimeout(show,900)}
+  G.turn=who==='p'?'c':'p';step()}
+function compPeg(){const lvl=+$('lvl').value;let best=-1,bv=-1e9;
+  G.cPeg.forEach((c,i)=>{if(val(c)+G.count>31)return;
+    let v=pegPts(G.pile.concat([c]),G.count+val(c)).p*10;const n=G.count+val(c);
+    if(lvl>=2){if(n===5||n===21)v-=4;if(G.count===0&&c.r===5)v-=5;v+=val(c)*.1}
+    if(lvl===1)v+=Math.random()*15;if(v>bv){bv=v;best=i}});return best}
+function show(){if(G.over)return;G.phase='show';render();
+  const nd=G.dealer==='p'?'c':'p';const name=w=>w==='p'?'Your':"Computer's";
+  const hand=w=>w==='p'?G.pKeep:G.cKeep;const lines=[];
+  const a=score(hand(nd),G.cut,false,true);add(nd,a.p,name(nd).toLowerCase()+' hand');lines.push(`${name(nd)} hand: <b>${a.p}</b> ${a.d.length?'('+a.d.join(', ')+')':''}`);
+  if(!G.over){const b=score(hand(G.dealer),G.cut,false,true);add(G.dealer,b.p,name(G.dealer).toLowerCase()+' hand');lines.push(`${name(G.dealer)} hand: <b>${b.p}</b> ${b.d.length?'('+b.d.join(', ')+')':''}`)}
+  if(!G.over){const k=score(G.crib,G.cut,true,true);G.phase='crib';render();add(G.dealer,k.p,'crib');lines.push(`${name(G.dealer)} crib: <b>${k.p}</b> ${k.d.length?'('+k.d.join(', ')+')':''}`)}
+  if(G.over)return;msg(lines.join('<br>'));
+  const b=$('act');b.textContent='Next Hand';b.disabled=false;b.onclick=()=>{G.dealer=G.dealer==='p'?'c':'p';deal()}}
+$('ng').onclick=newGame;
+</script>
+</body>
+</html>
