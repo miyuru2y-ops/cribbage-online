@@ -45,15 +45,17 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6p
 footer{text-align:center;padding:24px;font-size:14px;color:#666}
 @media(max-width:560px){.card{width:52px;height:76px;font-size:17px;padding:3px 5px}.card .s{font-size:22px}.row{min-height:88px}body{font-size:17px}}
 </style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the highest possible cribbage hand?", "acceptedAnswer": {"@type": "Answer", "text": "29 points: three 5s plus the Jack in hand, with the fourth 5 of the Jack's suit as the starter card."}}, {"@type": "Question", "name": "What score do you play to in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "A standard game is played to 121 points, which is twice around a standard pegboard."}}, {"@type": "Question", "name": "Is a hand of 19 possible in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "No. 19 is impossible, as are 25, 26 and 27. That is why players jokingly call a zero-point hand a “19”."}}, {"@type": "Question", "name": "Who counts first in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "The non-dealer always counts first, then the dealer counts their hand, then the dealer counts the crib."}}, {"@type": "Question", "name": "Can you play cribbage online free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. This page lets you play cribbage free against the computer with no download or sign-up."}}, {"@type": "Question", "name": "What does “his nobs” mean?", "acceptedAnswer": {"@type": "Answer", "text": "Holding the Jack of the same suit as the starter card scores 1 point, called his nobs."}}]}</script>
 </head>
 <body>
-<header><a href="/">♣ Cribbage Online</a><nav><a href="#rules">Rules</a><a href="#scoring">Scoring</a></nav></header>
+<header><a href="/">♣ Sluggers Cribbage Club</a><nav><a href="/how-to-play/">Rules</a><a href="/calculator/">Calculator</a><a href="/strategy/">Strategy</a></nav></header>
 
 <section id="table" aria-label="Cribbage game">
   <div class="scores">
     <div class="sc">You: <b id="ps">0</b> / 121<div class="bar"><i id="pb" style="width:0"></i></div></div>
     <div class="sc">Computer: <b id="cs">0</b> / 121<div class="bar"><i id="cb" style="width:0"></i></div></div>
   </div>
+  <svg id="board" viewBox="0 0 960 150" role="img" aria-label="Cribbage pegboard" style="width:100%;margin-top:10px;background:#8a5a2b;border-radius:10px"></svg>
   <div class="lbl" id="clbl">Computer's hand</div>
   <div class="row" id="chand"></div>
   <div class="mid">
@@ -105,13 +107,24 @@ footer{text-align:center;padding:24px;font-size:14px;color:#666}
 <li>When it's not your crib, avoid throwing 5s or pairs into it.</li>
 <li>During pegging, avoid leading a card that lets your opponent make 15 easily, and avoid leaving the count at 5 or 21.</li>
 </ul>
-</main>
-<footer>© Cribbage Online · Free to play</footer>
+<h2 id="faq">Cribbage FAQ</h2><h3>What is the highest possible cribbage hand?</h3><p>29 points: three 5s plus the Jack in hand, with the fourth 5 of the Jack's suit as the starter card.</p><h3>What score do you play to in cribbage?</h3><p>A standard game is played to 121 points, which is twice around a standard pegboard.</p><h3>Is a hand of 19 possible in cribbage?</h3><p>No. 19 is impossible, as are 25, 26 and 27. That is why players jokingly call a zero-point hand a “19”.</p><h3>Who counts first in cribbage?</h3><p>The non-dealer always counts first, then the dealer counts their hand, then the dealer counts the crib.</p><h3>Can you play cribbage online free?</h3><p>Yes. This page lets you play cribbage free against the computer with no download or sign-up.</p><h3>What does “his nobs” mean?</h3><p>Holding the Jack of the same suit as the starter card scores 1 point, called his nobs.</p><h2>Learn More</h2><ul>
+<li><a href="/how-to-play/">How to play cribbage (full rules)</a></li><li><a href="/scoring/">Cribbage scoring guide</a></li>
+<li><a href="/calculator/">Cribbage hand calculator</a></li><li><a href="/strategy/">Cribbage discard strategy</a></li>
+<li><a href="/pegging-strategy/">Pegging strategy</a></li><li><a href="/best-hands/">Best cribbage hands</a></li>
+<li><a href="/counting-hands/">How to count cribbage hands fast</a></li><li><a href="/three-player-cribbage/">3-player cribbage rules</a></li>
+<li><a href="/beginners/">Cribbage for beginners</a></li></ul></main>
+<footer>© Sluggers Cribbage Club · Free to play</footer>
 
 <script>
 const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const val=c=>Math.min(c.r,10),$=id=>document.getElementById(id);
 let G;
+function holeXY(sc,who){const off=who==='p'?0:14;if(sc<=0)return[14,20+off];if(sc>=121)return[946,80+off];
+  const i=sc-1,r=Math.floor(i/40);let c=i%40;if(r%2)c=39-c;return[34+c*21+Math.floor(c/5)*6,20+r*44+off]}
+function drawBoard(){let h='';for(const w of['p','c']){const col=w==='p'?'#4db3ff':'#ff6b6b';
+  for(let s=0;s<=121;s++){const[x,y]=holeXY(s,w);h+=`<circle cx="${x}" cy="${y}" r="${s%5===0&&s?3.2:2.6}" fill="#3b230f"/>`}
+  for(const[v,o]of[[G.prev[w],.55],[G.sc[w],1]]){const[x,y]=holeXY(v,w);h+=`<circle cx="${x}" cy="${y}" r="6" fill="${col}" stroke="#fff" stroke-width="1.5" opacity="${o}"/>`}}
+  h+='<text x="946" y="140" fill="#fff" font-size="12" text-anchor="middle">121</text>';$('board').innerHTML=h}
 function deck(){const d=[];for(let s=0;s<4;s++)for(let r=1;r<=13;r++)d.push({r,s});for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}return d}
 function combos(a,k){const out=[];(function f(s,acc){if(acc.length===k){out.push(acc.slice());return}for(let i=s;i<a.length;i++){acc.push(a[i]);f(i+1,acc);acc.pop()}})(0,[]);return out}
 function score(hand,cut,crib,detail){
@@ -130,18 +143,18 @@ function score(hand,cut,crib,detail){
 function cardEl(c,opts={}){const e=document.createElement('div');
   if(!c){e.className='card back';return e}
   e.className='card'+(c.s===1||c.s===2?' red':'');
-  e.innerHTML=`<span>${RK[c.r-1]}</span><span class="s">${SU[c.s]}</span><span style="align-self:flex-end;transform:rotate(180deg)">${RK[c.r-1]}</span>`;
+  e.innerHTML=`<span>${RK[c.r-1]}</span><span class="s">${SU[c.s]}</span><span style="align-self:flex-end;transform:rotate(180deg);font-size:.7em;line-height:1">${RK[c.r-1]}</span>`;
   e.setAttribute('aria-label',RK[c.r-1]+' of '+['spades','hearts','diamonds','clubs'][c.s]);
   if(opts.click){e.classList.add('click');e.onclick=opts.click}
   if(opts.sel)e.classList.add('sel');if(opts.dim)e.classList.add('dim');return e}
 const sortH=h=>h.sort((a,b)=>a.r-b.r||a.s-b.s);
 function log(t){const l=$('log');l.innerHTML=`<div>${t}</div>`+l.innerHTML}
 function msg(t){$('msg').innerHTML=t}
-function add(who,n,why){if(!n||G.over)return;G.sc[who]=Math.min(121,G.sc[who]+n);
+function add(who,n,why){if(!n||G.over)return;G.prev[who]=G.sc[who];G.sc[who]=Math.min(121,G.sc[who]+n);
   log(`${who==='p'?'You':'Computer'} +${n} (${why})`);upd();
   if(G.sc[who]>=121){G.over=true;msg(who==='p'?'🎉 <b>You win!</b> Press New Game to play again.':'The computer wins this time. Press New Game to try again.');$('act').disabled=true}}
 function upd(){$('ps').textContent=G.sc.p;$('cs').textContent=G.sc.c;
-  $('pb').style.width=G.sc.p/121*100+'%';$('cb').style.width=G.sc.c/121*100+'%'}
+  $('pb').style.width=G.sc.p/121*100+'%';$('cb').style.width=G.sc.c/121*100+'%';drawBoard()}
 function render(){
   const ch=$('chand');ch.innerHTML='';
   if(G.phase==='show'||G.phase==='crib')G.cKeep.forEach(c=>ch.appendChild(cardEl(c)));
@@ -157,7 +170,7 @@ function render(){
   $('count').textContent=G.phase==='peg'?G.count:'–';
   $('clbl').textContent="Computer's hand"+(G.dealer==='c'?' (dealer)':'');
   $('plbl').textContent='Your hand'+(G.dealer==='p'?' (dealer)':'')}
-function newGame(){G={sc:{p:0,c:0},dealer:Math.random()<.5?'p':'c',over:false};$('log').innerHTML='';upd();deal()}
+function newGame(){G={sc:{p:0,c:0},prev:{p:0,c:0},dealer:Math.random()<.5?'p':'c',over:false};$('log').innerHTML='';upd();deal()}
 function deal(){if(G.over)return;const d=deck();
   Object.assign(G,{deck:d,pHand:sortH(d.splice(0,6)),cHand:sortH(d.splice(0,6)),crib:[],pile:[],count:0,cut:null,sel:[],phase:'discard'});
   msg(`Choose 2 cards to put in ${G.dealer==='p'?'<b>your</b>':"the <b>computer's</b>"} crib.`);
@@ -218,7 +231,7 @@ function show(){if(G.over)return;G.phase='show';render();
   if(!G.over){const k=score(G.crib,G.cut,true,true);G.phase='crib';render();add(G.dealer,k.p,'crib');lines.push(`${name(G.dealer)} crib: <b>${k.p}</b> ${k.d.length?'('+k.d.join(', ')+')':''}`)}
   if(G.over)return;msg(lines.join('<br>'));
   const b=$('act');b.textContent='Next Hand';b.disabled=false;b.onclick=()=>{G.dealer=G.dealer==='p'?'c':'p';deal()}}
-$('ng').onclick=newGame;
+$('ng').onclick=newGame;G={sc:{p:0,c:0},prev:{p:0,c:0}};drawBoard();
 </script>
 </body>
 </html>
