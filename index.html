@@ -10,68 +10,85 @@
 {"@context":"https://schema.org","@type":"VideoGame","name":"Cribbage Online","genre":"Card game","gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free online cribbage against the computer with automatic scoring."}
 </script>
 <style>
-:root{--felt:#1f5f3f;--felt2:#174a31;--ink:#1d1d1f;--gold:#f2c14e;--card:#fffdf7}
+:root{--felt:#1e6b45;--felt2:#0f3d27;--gold:#f5c451;--ink:#1d1d1f}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f1ea;color:var(--ink);font-size:18px;line-height:1.55}
-header{background:var(--felt2);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-header a{color:#fff;text-decoration:none;font-weight:700;font-size:20px}
-header nav a{font-size:16px;font-weight:500;margin-left:16px;opacity:.9}
-#table{background:radial-gradient(circle at 50% 40%,var(--felt),var(--felt2));color:#fff;padding:14px;max-width:960px;margin:0 auto;min-height:560px;border-radius:0 0 14px 14px}
-.scores{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sc{background:rgba(0,0,0,.25);border-radius:10px;padding:8px 12px}
-.sc b{font-size:26px;color:var(--gold)}
-.bar{height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;margin-top:4px}
-.bar i{display:block;height:100%;background:var(--gold);transition:width .4s}
-.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:112px;margin:12px 0;align-items:center}
-.lbl{text-align:center;font-size:15px;opacity:.85}
-.card{width:68px;height:98px;border-radius:8px;background:var(--card);color:#111;box-shadow:0 2px 5px rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:space-between;padding:5px 7px;font-weight:700;font-size:22px;user-select:none;position:relative;transition:transform .15s}
-.card .s{font-size:30px;text-align:center}
-.card.red{color:#c0262d}
-.card.back{background:repeating-linear-gradient(45deg,#8b1e2b,#8b1e2b 6px,#a3283a 6px,#a3283a 12px);border:3px solid #fff}
-.card.click{cursor:pointer}.card.click:hover{transform:translateY(-6px)}
-.card.sel{transform:translateY(-14px);outline:3px solid var(--gold)}
-.card.dim{opacity:.4}
-.mid{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
-#count{font-size:34px;font-weight:800;color:var(--gold);text-align:center;min-width:90px}
-#msg{background:rgba(0,0,0,.3);border-radius:10px;padding:10px 14px;text-align:center;min-height:50px;font-size:18px}
-button{font:inherit;font-weight:700;background:var(--gold);border:0;border-radius:10px;padding:12px 22px;cursor:pointer;color:#222}
-button:disabled{opacity:.4;cursor:default}
-.ctr{text-align:center;margin:10px 0}
-select{font:inherit;padding:6px;border-radius:8px}
-#log{font-size:15px;max-height:120px;overflow:auto;background:rgba(0,0,0,.2);border-radius:8px;padding:6px 10px;margin-top:10px}
-main{max-width:860px;margin:0 auto;padding:20px 16px}
-h1{font-size:30px;line-height:1.2}h2{margin-top:32px}
-table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px;text-align:left}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:#efeae0;color:var(--ink);font-size:18px;line-height:1.6}
+header{background:linear-gradient(#0d2f1f,#0a2618);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.4);position:relative;z-index:2}
+header a{color:#fff;text-decoration:none;font-weight:800;font-size:21px;letter-spacing:.2px}
+header nav a{font-size:15px;font-weight:600;margin-left:18px;opacity:.85}header nav a:hover{opacity:1;color:var(--gold)}
+#table{position:relative;background:radial-gradient(ellipse at 50% 35%,#2a8a5a 0%,var(--felt) 35%,var(--felt2) 100%);color:#fff;padding:14px 14px 18px;min-height:calc(100vh - 52px);display:flex;flex-direction:column;gap:10px;box-shadow:inset 0 0 120px rgba(0,0,0,.45)}
+#table:before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='%23000' opacity='.06'/%3E%3C/svg%3E");pointer-events:none}
+.wrap{max-width:1040px;width:100%;margin:0 auto;position:relative}
+.topbar{display:flex;gap:10px;align-items:stretch}
+.sc{flex:1;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:8px 14px}
+.dot{width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 2px #fff}
+.sc .nm{font-weight:700;font-size:15px;opacity:.9}.sc b{font-size:28px;color:var(--gold);margin-left:auto;font-variant-numeric:tabular-nums}
+.bar{display:none}
+#board{display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2)}
+.lbl{text-align:center;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.75;font-weight:700}
+.row{display:flex;justify-content:center;align-items:center;min-height:126px;padding:4px 0}
+.hand .card+.card{margin-left:-26px}
+.card{width:84px;height:120px;border-radius:9px;background:linear-gradient(160deg,#fff,#f4f1e8);color:#16161a;box-shadow:0 3px 8px rgba(0,0,0,.45),inset 0 0 0 1px rgba(0,0,0,.12);position:relative;user-select:none;transition:transform .18s,box-shadow .18s;flex:none;font-family:Georgia,"Times New Roman",serif}
+.card .tl,.card .br{position:absolute;display:flex;flex-direction:column;align-items:center;line-height:.95;font-weight:700;font-size:19px}
+.card .tl{top:5px;left:6px}.card .br{bottom:5px;right:6px;transform:rotate(180deg)}
+.card .tl i,.card .br i{font-style:normal;font-size:16px}
+.card .ctr{position:absolute;inset:26px 16px;display:flex;align-items:center;justify-content:center;font-size:40px}
+.card .face{position:absolute;inset:22px 14px;border:2px solid currentColor;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;font-weight:700;background:repeating-linear-gradient(45deg,rgba(0,0,0,.03) 0 4px,transparent 4px 8px)}
+.card .face small{font-size:22px}
+.card.red{color:#c4161c}
+.card.back{background:#fff;padding:5px}.card.back:after{content:"";position:absolute;inset:5px;border-radius:6px;background:radial-gradient(circle at 50% 50%,#c43a4a 0 18%,transparent 19%),repeating-linear-gradient(45deg,#8e1b2c 0 5px,#a8263a 5px 10px)}
+.card.click{cursor:pointer}.card.click:hover{transform:translateY(-12px);box-shadow:0 10px 18px rgba(0,0,0,.5)}
+.card.sel{transform:translateY(-22px);box-shadow:0 0 0 3px var(--gold),0 10px 18px rgba(0,0,0,.5)}
+.card.dim{filter:brightness(.6)}
+.mid{display:grid;grid-template-columns:110px 1fr 110px;align-items:center;gap:10px}
+.slotbox{display:flex;flex-direction:column;align-items:center;gap:4px}
+#starter{min-height:0}
+#count{width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,.35);border:2px solid var(--gold);color:var(--gold);font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center}
+#pile .card+.card{margin-left:-40px}
+#msg{align-self:center;background:rgba(10,30,20,.75);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:999px;padding:10px 24px;text-align:center;font-size:17px;max-width:720px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.ctrls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}
+button{font:inherit;font-weight:800;font-size:16px;background:linear-gradient(#ffd56b,#e9ad2b);border:0;border-radius:12px;padding:11px 24px;cursor:pointer;color:#3a2600;box-shadow:0 3px 0 #a87612,0 6px 12px rgba(0,0,0,.3)}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #a87612}
+button:disabled{filter:grayscale(1);opacity:.45;cursor:default}
+#ng{background:linear-gradient(#ffffff,#dcdcdc);box-shadow:0 3px 0 #999,0 6px 12px rgba(0,0,0,.3);color:#222}
+.ctrls label{font-size:15px;opacity:.9}select{font:inherit;font-size:15px;padding:6px 10px;border-radius:10px;border:0}
+#log{font-size:14px;max-height:84px;overflow:auto;background:rgba(0,0,0,.22);border-radius:10px;padding:6px 12px;opacity:.85}
+main{max-width:860px;margin:30px auto;padding:28px 30px;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+main h1{font-size:32px;line-height:1.2;margin-top:0;font-family:Georgia,serif}main h2{margin-top:34px;font-family:Georgia,serif;color:#174a31}
+main a{color:#1e6b45}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #e3e3e3;padding:8px 10px;text-align:left}th{background:#f3f7f4}
 footer{text-align:center;padding:24px;font-size:14px;color:#666}
-@media(max-width:560px){.card{width:52px;height:76px;font-size:17px;padding:3px 5px}.card .s{font-size:22px}.row{min-height:88px}body{font-size:17px}}
+@media(max-width:640px){.card{width:60px;height:86px}.card .tl,.card .br{font-size:15px}.card .tl i,.card .br i{font-size:12px}.card .ctr{font-size:28px;inset:20px 10px}.card .face{inset:18px 9px;font-size:20px}.card .face small{font-size:15px}
+.hand .card+.card{margin-left:-14px}.row{min-height:92px}.mid{grid-template-columns:76px 1fr 76px}#count{width:50px;height:50px;font-size:20px}.sc b{font-size:22px}header nav a{margin-left:10px;font-size:14px}main{padding:20px 16px;margin:16px 8px}.hm{display:none}#board{border-radius:8px}}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the highest possible cribbage hand?", "acceptedAnswer": {"@type": "Answer", "text": "29 points: three 5s plus the Jack in hand, with the fourth 5 of the Jack's suit as the starter card."}}, {"@type": "Question", "name": "What score do you play to in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "A standard game is played to 121 points, which is twice around a standard pegboard."}}, {"@type": "Question", "name": "Is a hand of 19 possible in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "No. 19 is impossible, as are 25, 26 and 27. That is why players jokingly call a zero-point hand a “19”."}}, {"@type": "Question", "name": "Who counts first in cribbage?", "acceptedAnswer": {"@type": "Answer", "text": "The non-dealer always counts first, then the dealer counts their hand, then the dealer counts the crib."}}, {"@type": "Question", "name": "Can you play cribbage online free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. This page lets you play cribbage free against the computer with no download or sign-up."}}, {"@type": "Question", "name": "What does “his nobs” mean?", "acceptedAnswer": {"@type": "Answer", "text": "Holding the Jack of the same suit as the starter card scores 1 point, called his nobs."}}]}</script>
 </head>
 <body>
-<header><a href="/">♣ Sluggers Cribbage Club</a><nav><a href="/how-to-play/">Rules</a><a href="/calculator/">Calculator</a><a href="/strategy/">Strategy</a></nav></header>
+<header><a href="/">♣ Sluggers<span class="hm"> Cribbage Club</span></a><nav><a href="/how-to-play/">Rules</a><a href="/calculator/">Calculator</a><a href="/strategy/">Strategy</a></nav></header>
 
-<section id="table" aria-label="Cribbage game">
-  <div class="scores">
-    <div class="sc">You: <b id="ps">0</b> / 121<div class="bar"><i id="pb" style="width:0"></i></div></div>
-    <div class="sc">Computer: <b id="cs">0</b> / 121<div class="bar"><i id="cb" style="width:0"></i></div></div>
+<section id="table" aria-label="Cribbage game"><div class="wrap" style="display:flex;flex-direction:column;gap:10px">
+  <div class="topbar">
+    <div class="sc"><span class="dot" style="background:#3da5ff"></span><span class="nm" id="plbl2">You</span><b id="ps">0</b><div class="bar"><i id="pb"></i></div></div>
+    <div class="sc"><span class="dot" style="background:#ff5a5a"></span><span class="nm">Computer</span><b id="cs">0</b><div class="bar"><i id="cb"></i></div></div>
   </div>
-  <svg id="board" viewBox="0 0 960 150" role="img" aria-label="Cribbage pegboard" style="width:100%;margin-top:10px;background:#8a5a2b;border-radius:10px"></svg>
+  <svg id="board" viewBox="0 0 960 150" role="img" aria-label="Cribbage pegboard"></svg>
   <div class="lbl" id="clbl">Computer's hand</div>
-  <div class="row" id="chand"></div>
+  <div class="row hand" id="chand"></div>
   <div class="mid">
-    <div><div class="lbl">Starter</div><div class="row" id="starter" style="min-height:0;margin:4px 0"></div><div class="lbl">Count</div><div id="count">0</div></div>
-    <div><div class="lbl" id="pilelbl">Play pile</div><div class="row" id="pile"></div></div>
+    <div class="slotbox"><div class="lbl">Starter</div><div class="row" id="starter" style="min-height:0"></div></div>
+    <div class="slotbox"><div class="lbl" id="pilelbl">Play pile</div><div class="row" id="pile"></div><div id="count">0</div></div>
+    <div class="slotbox"><div class="lbl">Deck</div><div class="row" style="min-height:0"><div class="card back"></div></div></div>
   </div>
   <div id="msg">Welcome! Press <b>New Game</b> to start.</div>
-  <div class="lbl" style="margin-top:10px" id="plbl">Your hand</div>
-  <div class="row" id="phand"></div>
-  <div class="ctr">
+  <div class="row hand" id="phand"></div>
+  <div class="lbl" id="plbl">Your hand</div>
+  <div class="ctrls">
     <button id="act" disabled>Discard to Crib</button>
     <button id="ng">New Game</button>
-    <label style="margin-left:8px">Level <select id="lvl"><option value="1">Easy</option><option value="2" selected>Normal</option><option value="3">Hard</option></select></label>
+    <label>Level <select id="lvl"><option value="1">Easy</option><option value="2" selected>Normal</option><option value="3">Hard</option></select></label>
   </div>
   <div id="log" aria-live="polite"></div>
-</section>
+</div></section>
 
 <main>
 <h1>Play Cribbage Online Free</h1>
@@ -121,9 +138,10 @@ const val=c=>Math.min(c.r,10),$=id=>document.getElementById(id);
 let G;
 function holeXY(sc,who){const off=who==='p'?0:14;if(sc<=0)return[14,20+off];if(sc>=121)return[946,80+off];
   const i=sc-1,r=Math.floor(i/40);let c=i%40;if(r%2)c=39-c;return[34+c*21+Math.floor(c/5)*6,20+r*44+off]}
-function drawBoard(){let h='';for(const w of['p','c']){const col=w==='p'?'#4db3ff':'#ff6b6b';
-  for(let s=0;s<=121;s++){const[x,y]=holeXY(s,w);h+=`<circle cx="${x}" cy="${y}" r="${s%5===0&&s?3.2:2.6}" fill="#3b230f"/>`}
-  for(const[v,o]of[[G.prev[w],.55],[G.sc[w],1]]){const[x,y]=holeXY(v,w);h+=`<circle cx="${x}" cy="${y}" r="6" fill="${col}" stroke="#fff" stroke-width="1.5" opacity="${o}"/>`}}
+function drawBoard(){let h='<defs><linearGradient id="wd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9824a"/><stop offset=".5" stop-color="#a06a35"/><stop offset="1" stop-color="#7d4f24"/></linearGradient></defs><rect width="960" height="150" rx="14" fill="url(#wd)"/>';
+  for(let r=0;r<3;r++){h+=`<rect x="24" y="${10+r*44}" width="900" height="34" rx="17" fill="rgba(0,0,0,.14)"/>`}for(const w of['p','c']){const col=w==='p'?'#3da5ff':'#ff5a5a';
+  for(let s=0;s<=121;s++){const[x,y]=holeXY(s,w);h+=`<circle cx="${x}" cy="${y}" r="3" fill="#2a170a" stroke="rgba(255,255,255,.18)" stroke-width=".8"/>`}
+  for(const[v,o]of[[G.prev[w],.55],[G.sc[w],1]]){const[x,y]=holeXY(v,w);h+=`<circle cx="${x}" cy="${y}" r="6.5" fill="${col}" stroke="#fff" stroke-width="2" opacity="${o}"/>`}}
   h+='<text x="946" y="140" fill="#fff" font-size="12" text-anchor="middle">121</text>';$('board').innerHTML=h}
 function deck(){const d=[];for(let s=0;s<4;s++)for(let r=1;r<=13;r++)d.push({r,s});for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}return d}
 function combos(a,k){const out=[];(function f(s,acc){if(acc.length===k){out.push(acc.slice());return}for(let i=s;i<a.length;i++){acc.push(a[i]);f(i+1,acc);acc.pop()}})(0,[]);return out}
@@ -143,7 +161,7 @@ function score(hand,cut,crib,detail){
 function cardEl(c,opts={}){const e=document.createElement('div');
   if(!c){e.className='card back';return e}
   e.className='card'+(c.s===1||c.s===2?' red':'');
-  e.innerHTML=`<span>${RK[c.r-1]}</span><span class="s">${SU[c.s]}</span><span style="align-self:flex-end;transform:rotate(180deg);font-size:.7em;line-height:1">${RK[c.r-1]}</span>`;
+  const R=RK[c.r-1],S=SU[c.s];e.innerHTML=`<div class="tl">${R}<i>${S}</i></div>`+(c.r>10?`<div class="face">${R}<small>${S}</small></div>`:`<div class="ctr">${S}</div>`)+`<div class="br">${R}<i>${S}</i></div>`;
   e.setAttribute('aria-label',RK[c.r-1]+' of '+['spades','hearts','diamonds','clubs'][c.s]);
   if(opts.click){e.classList.add('click');e.onclick=opts.click}
   if(opts.sel)e.classList.add('sel');if(opts.dim)e.classList.add('dim');return e}
